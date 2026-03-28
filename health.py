@@ -10,7 +10,7 @@ st.title("SVIR Epidemic Model Simulator")
 st.sidebar.header("Model Parameters")
 
 N = st.sidebar.number_input("Population (N)", value=1000)
-beta = st.sidebar.slider("Transmission Rate (beta)", 0, 1.0, 0.4)
+beta = st.sidebar.slider("Transmission Rate (beta)", 0.1, 1.0, 0.4)
 gamma = st.sidebar.slider("Recovery Rate (gamma)", 0.05, 0.5, 0.1)
 v = st.sidebar.slider("Vaccination Rate (v)", 0.0, 0.1, 0.01)
 
