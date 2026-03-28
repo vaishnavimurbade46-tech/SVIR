@@ -49,10 +49,6 @@ ax.plot(t, V, label="Vaccinated")
 ax.plot(t, I, label="Infected")
 ax.plot(t, R, label="Recovered")
 
-
-st.subheader("📊 Day-to-Day Simulation Data")
-st.dataframe(data.style.format("{:.0f}"))
-
 ax.set_xlabel("Days")
 ax.set_ylabel("Population")
 ax.legend()
