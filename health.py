@@ -2,7 +2,7 @@ import numpy as np
 from scipy.integrate import odeint
 import matplotlib.pyplot as plt
 import streamlit as st
-import pandas as pd
+
 
 # Title
 st.title("SVIR Epidemic Model Simulator")
@@ -48,15 +48,7 @@ ax.plot(t, S, label="Susceptible")
 ax.plot(t, V, label="Vaccinated")
 ax.plot(t, I, label="Infected")
 ax.plot(t, R, label="Recovered")
-# Create Data Table
-results = odeint(model, y0, t, args=(beta, gamma))
-data = pd.DataFrame({
-    "Day": t.astype(int),
-    "Susceptible": results[:, 0],
-    "Vaccinated": results[:, 1],
-    "Infected": results[:, 2],
-    "Recovered": results[:, 3]
-})
+
 
 st.subheader("📊 Day-to-Day Simulation Data")
 st.dataframe(data.style.format("{:.0f}"))
