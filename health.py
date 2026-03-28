@@ -14,7 +14,7 @@ beta = st.sidebar.slider("Transmission Rate (beta)", 0.1, 1.0, 0.4)
 gamma = st.sidebar.slider("Recovery Rate (gamma)", 0.05, 0.5, 0.1)
 v = st.sidebar.slider("Vaccination Rate (v)", 0.0, 0.1, 0.01)
 
-days = st.sidebar.slider("Simulation Days", 30, 300, 160)
+days = st.sidebar.slider("Simulation Days", 0, 300, 160)
 
 # Initial Conditions
 I0 = st.sidebar.number_input("Initial Infected", value=1)
