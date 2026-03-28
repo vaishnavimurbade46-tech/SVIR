@@ -49,6 +49,7 @@ ax.plot(t, V, label="Vaccinated")
 ax.plot(t, I, label="Infected")
 ax.plot(t, R, label="Recovered")
 # Create Data Table
+results = odeint(model, y0, t, args=(beta, gamma))
 data = pd.DataFrame({
     "Day": t.astype(int),
     "Susceptible": results[:, 0],
