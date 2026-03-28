@@ -2,6 +2,7 @@ import numpy as np
 from scipy.integrate import odeint
 import matplotlib.pyplot as plt
 import streamlit as st
+import pandas as pd
 
 # Title
 st.title("SVIR Epidemic Model Simulator")
