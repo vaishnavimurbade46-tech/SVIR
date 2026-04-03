@@ -8,79 +8,62 @@ st.set_page_config(page_title="SVIR Epidemic Model", layout="wide")
 
 st.title("🏥 SVIR Epidemic Model Simulator")
 
-# ---------------- Sidebar Inputs ----------------
+# ---------------- Sidebar ----------------
 st.sidebar.header("Model Parameters")
 
-N = st.sidebar.number_input("Total Population (N)", value=1000)
-beta = st.sidebar.slider("Transmission Rate (β)", 0.1, 1.0, 0.3)
-gamma = st.sidebar.slider("Recovery Rate (γ)", 0.05, 0.5, 0.1)
-vaccination_rate = st.sidebar.slider("Vaccination Rate", 0.0, 0.5, 0.05)
-days = st.sidebar.slider("Simulation Days", 30, 200, 150)
+N = st.sidebar.number_input("Population (N)", min_value=1, value=1000)
 
-# Initial Conditions
-I0 = 10
-R0 = 0
-V0 = 0
-S0 = N - I0 - R0 - V0
+beta = st.sidebar.slider("Transmission Rate (beta)", 0.1, 1.0, 0.4)
+gamma = st.sidebar.slider("Recovery Rate (gamma)", 0.01, 0.5, 0.1)
+nu = st.sidebar.slider("Vaccination Rate (ν)", 0.0, 0.5, 0.05)
+
+days = st.sidebar.slider("Simulation Days", 30, 300, 160)
+
+st.sidebar.subheader("Initial Conditions")
+
+I0 = st.sidebar.number_input("Initial Infected", min_value=0, value=1)
+V0 = st.sidebar.number_input("Initial Vaccinated", min_value=0, value=0)
+R0 = st.sidebar.number_input("Initial Recovered", min_value=0, value=0)
+
+S0 = N - I0 - V0 - R0
 
 # ---------------- SVIR Model ----------------
-def svir_model(y, t, N, beta, gamma, vaccination_rate):
+def svir_model(y, t, N, beta, gamma, nu):
     S, V, I, R = y
-    dSdt = -beta * S * I / N - vaccination_rate * S
-    dVdt = vaccination_rate * S
+    dSdt = -beta * S * I / N - nu * S
+    dVdt = nu * S
     dIdt = beta * S * I / N - gamma * I
     dRdt = gamma * I
     return dSdt, dVdt, dIdt, dRdt
 
-# ---------------- Generate Button ----------------
-if st.button("Generate Graph & Store Data"):
+# ---------------- Simulation ----------------
+t = np.linspace(0, days, days)
+y0 = S0, V0, I0, R0
 
-    t = np.linspace(0, days, days)
-    y0 = S0, V0, I0, R0
+solution = odeint(svir_model, y0, t, args=(N, beta, gamma, nu))
+S, V, I, R = solution.T
 
-    solution = odeint(svir_model, y0, t, args=(N, beta, gamma, vaccination_rate))
-    S, V, I, R = solution.T
+# ---------------- Plot Graph ----------------
+fig, ax = plt.subplots(figsize=(10,6))
 
-    # ---------------- Plot Graph ----------------
-    fig, ax = plt.subplots(figsize=(10,6))
+# Strong distinct colors
+ax.plot(t, S, color="blue", linewidth=3, label="Susceptible")
+ax.plot(t, V, color="orange", linewidth=3, label="Vaccinated")
+ax.plot(t, I, color="red", linewidth=3, label="Infected")
+ax.plot(t, R, color="green", linewidth=3, label="Recovered")
 
-    ax.plot(t, S, label="Susceptible", linewidth=2)
-    ax.plot(t, V, label="Vaccinated", linewidth=2)
-    ax.plot(t, I, label="Infected", linewidth=2)
-    ax.plot(t, R, label="Recovered", linewidth=2)
+ax.set_xlabel("Days", fontsize=12)
+ax.set_ylabel("Population", fontsize=12)
+ax.set_title("SVIR Epidemic Simulation", fontsize=15)
+ax.legend(fontsize=11)
+ax.grid(True)
 
-    ax.set_xlabel("Days")
-    ax.set_ylabel("Population")
-    ax.set_title("SVIR Epidemic Simulation")
-    ax.legend()
+st.pyplot(fig)
 
-    st.pyplot(fig)
+# ---------------- Peak Info ----------------
+peak_infected = max(I)
+peak_day = t[np.argmax(I)]
 
-    # ---------------- Store Data ----------------
-    df = pd.DataFrame({
-        "Day": t,
-        "Susceptible": S,
-        "Vaccinated": V,
-        "Infected": I,
-        "Recovered": R
-    })
-
-    # Save to CSV automatically
-    df.to_csv("svir_simulation_data.csv", index=False)
-
-    # Save in session for later viewing
-    st.session_state["simulation_data"] = df
-
-    st.success("Graph Generated & Data Stored Successfully!")
-
-# ---------------- View Stored Data ----------------
-if "simulation_data" in st.session_state:
-    if st.button("View Stored Table"):
-        st.dataframe(st.session_state["simulation_data"])
-
-    st.download_button(
-        "Download CSV File",
-        st.session_state["simulation_data"].to_csv(index=False),
-        file_name="svir_simulation_data.csv",
-        mime="text/csv"
-    )
+st.markdown("### 📊 Peak Infection Details")
+st.write(f"Peak Infected Population: {int(peak_infected)}")
+st.write(f"Peak Day: {int(peak_day)}")
