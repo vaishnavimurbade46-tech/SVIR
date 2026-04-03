@@ -43,34 +43,8 @@ y0 = S0, V0, I0, R0
 solution = odeint(svir_model, y0, t, args=(N, beta, gamma, nu))
 S, V, I, R = solution.T
 
-# ---------------- Plot Graph ----------------
-fig, ax = plt.subplots(figsize=(10,6))
-
-ax.plot(t, S, color="blue", linewidth=3, label="Susceptible")
-ax.plot(t, V, color="orange", linewidth=3, label="Vaccinated")
-ax.plot(t, I, color="red", linewidth=3, label="Infected")
-ax.plot(t, R, color="green", linewidth=3, label="Recovered")
-
-ax.set_xlabel("Days")
-ax.set_ylabel("Population")
-ax.set_title("SVIR Epidemic Simulation")
-ax.legend()
-ax.grid(True)
-
-st.pyplot(fig)
-
-# ---------------- Peak Info ----------------
-peak_infected = max(I)
-peak_day = t[np.argmax(I)]
-
-st.markdown("### 📊 Peak Infection Details")
-st.write(f"Peak Infected Population: {int(peak_infected)}")
-st.write(f"Peak Day: {int(peak_day)}")
-
-# ---------------- Data Table ----------------
-st.markdown("### 📋 Simulation Data Table")
-
-df = pd.DataFrame({
+# ---------------- Store Data in Session ----------------
+new_df = pd.DataFrame({
     "Day": t.astype(int),
     "Susceptible": S.astype(int),
     "Vaccinated": V.astype(int),
@@ -78,4 +52,42 @@ df = pd.DataFrame({
     "Recovered": R.astype(int)
 })
 
-st.dataframe(df, use_container_width=True)
+if "editable_data" not in st.session_state:
+    st.session_state.editable_data = new_df
+
+# ---------------- Editable Table ----------------
+st.markdown("### 📋 Editable Simulation Data Table")
+
+edited_df = st.data_editor(
+    st.session_state.editable_data,
+    num_rows="dynamic",   # Allows deleting rows
+    use_container_width=True
+)
+
+# Save edited version
+st.session_state.editable_data = edited_df
+
+# ---------------- Plot Graph Based on Edited Table ----------------
+fig, ax = plt.subplots(figsize=(10,6))
+
+ax.plot(edited_df["Day"], edited_df["Susceptible"], color="blue", linewidth=3, label="Susceptible")
+ax.plot(edited_df["Day"], edited_df["Vaccinated"], color="orange", linewidth=3, label="Vaccinated")
+ax.plot(edited_df["Day"], edited_df["Infected"], color="red", linewidth=3, label="Infected")
+ax.plot(edited_df["Day"], edited_df["Recovered"], color="green", linewidth=3, label="Recovered")
+
+ax.set_xlabel("Days")
+ax.set_ylabel("Population")
+ax.set_title("SVIR Epidemic Simulation (Updated)")
+ax.legend()
+ax.grid(True)
+
+st.pyplot(fig)
+
+# ---------------- Peak Info ----------------
+if not edited_df.empty:
+    peak_infected = edited_df["Infected"].max()
+    peak_day = edited_df.loc[edited_df["Infected"].idxmax(), "Day"]
+
+    st.markdown("### 📊 Peak Infection Details")
+    st.write(f"Peak Infected Population: {int(peak_infected)}")
+    st.write(f"Peak Day: {int(peak_day)}")
