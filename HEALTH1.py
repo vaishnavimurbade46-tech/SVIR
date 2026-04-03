@@ -45,11 +45,11 @@ S, V, I, R = solution.T
 
 # Create fresh dataframe every time (IMPORTANT FIX)
 df = pd.DataFrame({
-    "Day": t.astype(int),
-    "Susceptible": S.astype(int),
-    "Vaccinated": V.astype(int),
-    "Infected": I.astype(int),
-    "Recovered": R.astype(int)
+    "Day": t,
+    "Susceptible": S,
+    "Vaccinated": V,
+    "Infected": I,
+    "Recovered": R
 })
 
 # ---------------- Editable Table ----------------
