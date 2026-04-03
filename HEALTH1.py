@@ -46,16 +46,15 @@ S, V, I, R = solution.T
 # ---------------- Plot Graph ----------------
 fig, ax = plt.subplots(figsize=(10,6))
 
-# Strong distinct colors
 ax.plot(t, S, color="blue", linewidth=3, label="Susceptible")
 ax.plot(t, V, color="orange", linewidth=3, label="Vaccinated")
 ax.plot(t, I, color="red", linewidth=3, label="Infected")
 ax.plot(t, R, color="green", linewidth=3, label="Recovered")
 
-ax.set_xlabel("Days", fontsize=12)
-ax.set_ylabel("Population", fontsize=12)
-ax.set_title("SVIR Epidemic Simulation", fontsize=15)
-ax.legend(fontsize=11)
+ax.set_xlabel("Days")
+ax.set_ylabel("Population")
+ax.set_title("SVIR Epidemic Simulation")
+ax.legend()
 ax.grid(True)
 
 st.pyplot(fig)
@@ -67,3 +66,16 @@ peak_day = t[np.argmax(I)]
 st.markdown("### 📊 Peak Infection Details")
 st.write(f"Peak Infected Population: {int(peak_infected)}")
 st.write(f"Peak Day: {int(peak_day)}")
+
+# ---------------- Data Table ----------------
+st.markdown("### 📋 Simulation Data Table")
+
+df = pd.DataFrame({
+    "Day": t.astype(int),
+    "Susceptible": S.astype(int),
+    "Vaccinated": V.astype(int),
+    "Infected": I.astype(int),
+    "Recovered": R.astype(int)
+})
+
+st.dataframe(df, use_container_width=True)
