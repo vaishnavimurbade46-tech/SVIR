@@ -75,3 +75,20 @@ st.markdown("---")
 if st.button("Show Stored Data Table"):
     stored_df = pd.read_csv(file_path)
     st.dataframe(stored_df)
+st.subheader("Simulation Graph")
+
+fig, ax = plt.subplots(figsize=(8,5))
+
+ax.plot(t, S, color='blue', linewidth=2.5, label="Susceptible")
+ax.plot(t, V, color='orange', linewidth=2.5, label="Vaccinated")
+ax.plot(t, I, color='red', linewidth=2.5, label="Infected")
+ax.plot(t, R, color='green', linewidth=2.5, label="Recovered")
+
+ax.set_xlabel("Days", fontsize=12)
+ax.set_ylabel("Population", fontsize=12)
+ax.set_title("SVIR Model Simulation", fontsize=14)
+
+ax.legend(fontsize=11)
+ax.grid(True)
+
+st.pyplot(fig)
