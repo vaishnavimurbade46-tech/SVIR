@@ -37,7 +37,7 @@ def svir_model(y, t, N, beta, gamma, nu):
     return dSdt, dVdt, dIdt, dRdt
 
 # ---------------- Simulation ----------------
-t = np.linspace(0, days, days)
+t = np.arange(0,days)
 y0 = S0, V0, I0, R0
 
 solution = odeint(svir_model, y0, t, args=(N, beta, gamma, nu))
